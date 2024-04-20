@@ -1,0 +1,29 @@
+---
+- name: Install NGINX
+  hosts: vm3
+  become: true
+  tasks:
+    - name: Ensure EPEL repository is present
+      yum:
+        name: epel-release
+        state: present
+
+    - name: Install NGINX
+      yum:
+        name: nginx
+        state: latest
+
+    - name: Start and enable NGINX
+      systemd:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Display NGINX version
+      command: nginx -v
+      register: nginx_version
+      changed_when: false
+
+    - name: Output NGINX version
+      debug:
+        msg: "{{ nginx_version.stderr }}"
